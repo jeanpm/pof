@@ -8,22 +8,20 @@ Created on Tue Jun 23 20:59:49 2015
 import numpy as np
 import random
 
-import knapsack as kp
+#import knapsack as kp
 import mst
-from binspace import BinarySpace
+#from binspace import BinarySpace
 from swap import SwapNeighborhood
 from bitflip import BitflipNeighborhood
-import pylab
-
-import random
+import matplotlib.pyplot as plt
 
 random.seed(0)
 np.random.seed(0)
 
-t = 0.1
-N = 15
-POPSIZE = 30
-MAXEVALS = 3000
+t = 0.3
+N = 50
+POPSIZE = 10
+MAXEVALS = 6000
 instance_file = "src/testset/test.100.1.1"
 
 #P  = kp.Knapsack(instance_file, BinarySpace)
@@ -32,7 +30,7 @@ N1 = BitflipNeighborhood(P.search_space)
 N2 = SwapNeighborhood(P.search_space)
 
 #x = kp.KpBinarySolution(P)
-x = mst.MSTSolution(P)
+#x = mst.MSTSolution(P)
 
 def xover(x, z):
     dist = x.distanceTo(z)
@@ -78,21 +76,23 @@ print nevals
 
 idx =  np.argsort([pop[i].evaluate() for i in xrange(POPSIZE)])
 #print pop[idx[0]].used, ", LB=", int(P.ub)
-print "f(x) = ", pop[idx[0]].evaluate() , " f(x*) = ", P.ref
+print "f(x)  = ", pop[idx[0]].evaluate() 
+print "f(x*) = ", P.ref
 #print [(i,j) for i,j in x.used]
 
 y = pop[idx[0]]
-   
-i = 50
-j = len(gaExp[:,0])
-pylab.plot(gaExp[i:j,0], gaExp[i:j,1], label="GA")
-pylab.plot(hcExp[i:j,0], hcExp[i:j,1], label="HC")
-pylab.plot(hcExp[i:j,0], [P.ref] * len(hcExp[i:j,1]), label="*")
-pylab.legend(loc='upper right')
 
-import networkx as nx
-G = nx.Graph()
-G.add_nodes_from(range(N))
-data = [(a,b,P.distance[a,b]) for a,b in y.used]
-G.add_weighted_edges_from(data)
-nx.draw(G, pos=nx.spring_layout(G))
+
+print "ST from GA"
+mst.print_spanning_tree(y.data, P.adjmat, layout)
+plt.draw()
+
+i = 100
+j = len(gaExp[:,0])
+plt.figure()
+plt.axis('on')
+plt.plot(gaExp[i:j,0], gaExp[i:j,1], label="GA")
+plt.plot(hcExp[i:j,0], hcExp[i:j,1], label="HC")
+plt.plot(hcExp[i:j,0], [P.ref] * len(hcExp[i:j,1]), label="*")
+plt.legend(loc='upper right')
+plt.draw()

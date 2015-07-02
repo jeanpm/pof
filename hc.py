@@ -10,6 +10,7 @@ import mst
 from binspace import BinarySpace
 from swap import SwapNeighborhood
 from bitflip import BitflipNeighborhood
+import matplotlib.pyplot as plt
 
 import numpy as np
 import random
@@ -17,10 +18,10 @@ import random
 random.seed(0)
 np.random.seed(0)
 
-MAXEVALS = 3000
+MAXEVALS = 6000
 instance_file = "src/testset/test.100.1.1"
 
-N = 15
+N = 50
 #P  = kp.Knapsack(instance_file, BinarySpace)
 P  = mst.MST(N)
 N1 = BitflipNeighborhood(P.search_space)
@@ -56,27 +57,17 @@ while nevals < MAXEVALS:
     hcExp[nevals-1] = [nevals, fx]
 
 print nevals 
-#print x, "LB=", int(P.lb)
-print "f(x) = ", fx
+print "UB=", P.ub
+print "f(x)  = ", fx
 print "f(x*) = ", P.ref
 #print [(i,j) for i,j in x.used]
    
-hcExp = hcExp[range(0,len(hcExp), POPSIZE)]
+hcExp = hcExp[range(0,len(hcExp), 10)]
 
-import networkx as nx
+print "ST from HC"
+layout = mst.print_spanning_tree(x.data, P.adjmat)
+plt.draw()   
 
-def print_spanning_tree(adj_matrix):
-    H = nx.Graph()
-    H.add_nodes_from(xrange(len(adj_matrix)))
-    nz = np.nonzero(adj_matrix)
-    e  = zip(nz[0], nz[1])
-    w  = adj_matrix[nz]
-    data = [ (e[i][0], e[i][1], w[i]) for i in xrange(len(e))]
-    H.add_weighted_edges_from(data)
-    nx.draw(H, pos=nx.spring_layout(H))
-
-print "Spanning tree found"
-print_spanning_tree(P.distance * x.data)
-print "Optimal spanning tree"
-print_spanning_tree(P.adjmat)
+#print "Optimal spanning tree"
+#mst.print_spanning_tree(P.adjmat)
 
