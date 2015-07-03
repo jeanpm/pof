@@ -11,20 +11,7 @@ from scipy.sparse.csgraph import minimum_spanning_tree
 from scipy.sparse.csgraph import connected_components
 import networkx as nx
 import matplotlib.pyplot as plt
-import random
 
-# -----------------------------------------------------------------------------
-class EdgeSpace(object):
-    '''
-    A search space containing complete and incomplete {0,1,-1}^n solutions.
-    '''
-    def __init__(self, n):    
-        self.dimension = n
-        # The components in this case are the indices of variables
-        self.components = []
-        for i in range(n):
-            for j in range(i+1, n):
-                self.components.append((i,j))
                 
 # -----------------------------------------------------------------------------      
 # Minimum Spanning Tree
@@ -42,7 +29,7 @@ class MST(object):
         # Calls the initializer (constructor) of the class 'search_space'
         self.search_space = EdgeSpace(self.N)
         
-        self.st = minimum_spanning_tree(self.distance)
+        self.sol = minimum_spanning_tree(self.distance)
         self.adjmat = self.st.toarray().astype(int)
         self.ref = np.sum(self.adjmat)
         
@@ -117,7 +104,8 @@ class MSTSolution(Solution):
         self.unused = list(x.unused)
         
     def distanceTo(self, y):
-        dist = np.sum(self.data != y.data)
+        du,dun = self.differenceTo(y)
+        dist = len(du) + len(dun)
         return dist
 
     def evaluate(self):
@@ -145,15 +133,13 @@ def print_spanning_tree(adj_matrix, opt_matrix, layout=None):
     
     H.add_weighted_edges_from(data1, attr="weight")
     if layout is None:
-        layout = nx.spring_layout(H, weight="weight")
-    nx.draw_networkx_edges(H, pos=layout, style='dashed')
-    raw_input()    
-    
-    for e in data1:
-        H.remove_edge(e[0], e[1])
-        
-    H.add_weighted_edges_from(data)
-    nx.draw_networkx_nodes(H, pos=layout, node_size=100, node_color="white")
-    nx.draw_networkx_edges(H, pos=layout, width=1.5)
+        layout = nx.spring_layout(H, weight="weight")            
+    nx.draw_networkx_edges(H, pos=layout, width=3, edge_color="red")    
+
+    G = nx.Graph()    
+    G.add_nodes_from(xrange(len(adj_matrix)))
+    G.add_weighted_edges_from(data)
+    nx.draw_networkx_nodes(G, pos=layout, node_size=100, node_color="white")
+    nx.draw_networkx_edges(G, pos=layout, style='dashed', width=2)        
     
     return layout

@@ -30,12 +30,12 @@ class Knapsack(object):
         cumweight = self.weight[ix].cumsum()
         # Lazy upper bound (feasible, minimization)
         k = (cumweight <= self.capacity).sum()
-        ub = -self.profit[ix[:k]].sum()
+        self.ub = -self.profit[ix[:k]].sum()
         # Fractional knapsack lower bound (infeasible, minimization)
-        self.ref = ub - self.density[ix[k]] * (self.capacity - cumweight[k-1])        
+        self.ref = self.ub - self.density[ix[k]] * (self.capacity - cumweight[k-1])        
         data = np.zeros(self.N, bool)
         data[ix[:k]] = True
-        self.heuristicSolution = data
+        self.sol = data
 
 
 # -----------------------------------------------------------------------------      
@@ -103,4 +103,4 @@ class KpBinarySolution(Solution):
         p = np.sum(self.data * self.problem.profit)
         w = np.sum(self.data * self.problem.weight) - self.problem.capacity
         obj = np.where(w <= 0, -p, w)
-        return obj
+        return obj    

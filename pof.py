@@ -39,6 +39,9 @@ class Solution(object):
     '''
     def evaluate(self):
         raise NotImplementedError()
+        
+    def isBetterThan(self, y):        
+        return self.evaluate() < y.evaluate()
 
 
 # -----------------------------------------------------------------------------

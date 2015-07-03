@@ -20,4 +20,24 @@ Challenges:
   1. From a incumbent solution and neighborhood exploration methods, they must implement which 
 
 
+Implementation: 
+- Se a estrutura de vizinhaça tiver que providenciar mecanismos para aplicar os movimentos, ela também terá que conhecer a estrutura da solução.
 
+- Se, por outro lado, a aplicação de um movimento for responsabilidade da solução, a vizinhança se torna independente da representação da solução.
+
+- O espaço S é definido implicitamente como o power set do conjunto de possíveis componentes C. Assim, as solucoes x E S, podem ser incompletas
+
+
+Application:
+- Low-level:
+  * Definir o espaço baseado em componentes específicos de um determinado problema.
+  * Implementar dentro das soluções os controle dos componentes disponíveis. Cada solução mantém em seu estado os componentes utilizados e os disponíveis.
+
+Utilizando os componentes disponíveis, possivelmente implementar novas vizinhanças.
+
+- High-level:
+Escolhe a solução a ser utilizada. Não conhece como a solução mantém seu estado de componentes. Apenas sabe a representação utilizada: binária, lista, etc.
+
+- Escolhe a vizinhança a ser utilizada. Bitflip, Swap, etc.
+
+- A vizinhança conhece os componentes usados e os disponíveis de cada solução. Porém não conhece a composição dos componentes.

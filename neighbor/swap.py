@@ -19,9 +19,7 @@ class SwapNeighborhood(Neighborhood):
         self.indexA = 0
         self.indexB = 0
         self.prevx  = None
-        # Used as state for random path enumeration
-        self.diffUsed = None 
-        self.diffUnused = None        
+    
         # Call superclass initializer
         super(SwapNeighborhood, self).__init__(search_space)
     
@@ -58,39 +56,36 @@ class SwapNeighborhood(Neighborhood):
     '''
     def randomNeighbor(self, x):
         y = None
-        if x.unused and x.used : # if unused is not empty
+        if x.unused and x.used : # if both are not empty
             y = x.clone()        
-            # Choses one random component from the used and removes
-            comp = y.used[random.randrange(len(y.used))]
-            y.delComponent(comp)        
-    
-            # Chooses one random component from the unused and inserts
-            comp = y.unused[random.randrange(len(y.unused))]
+            # Choses one random component from the used and removes it
+            comp = random.choice(y.used)
+            y.delComponent(comp)    
+            # Chooses one random component from the unused and inserts it
+            comp = random.choice(y.unused)
             y.addComponent(comp)
         # Returns None if not possible
         return y
         
     '''
-    Returns a random neighbor of x which is one step closer to y.
+    Returns a random neighbor of x which is one step closer to y.     
+    TODO: This might be more efficient if the difference is stored and modified 
+    along the path, instead of computing it at every call.
     '''
     def randomNeighborTowards(self, x, z):
-        # There is no path between solutions with different number of components
-        # in this type of neighborhood.
+        # In swap neighborhoods, there is no path between solutions with a 
+        # different number of components.
         if len(x.used) != len(z.used):
-            return None
+            raise StopIteration()
             
         y = x.clone()
-        # Set diff as np.array containing the indexes in which x != y
-        self.diffUsed = set(z.used) - set(x.used)
-        self.diffUnused = set(z.unused) - set(x.unused)
+        # Components (used by z and unused by x), (unused by z and used by x).
+        diffUsed, diffUnused = x.differenceTo(z)
 
-        if not self.diffUsed and not self.diffUnused:
-            return y
-        
-        comp = self.diffUsed.pop()
-        y.addComponent(comp)        
-        comp = self.diffUnused.pop()
-        y.delComponent(comp)       
-        
-        # Returns the next solution (y) in a path between x and z.
-        return y
+        while diffUsed and diffUnused: # If both sets are non-empty
+            comp = diffUsed.pop()
+            y.addComponent(comp)        
+            comp = diffUnused.pop()
+            y.delComponent(comp)
+            # Yields the next solution (y) in a path between x and z.
+            yield y
