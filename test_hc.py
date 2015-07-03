@@ -6,37 +6,31 @@ Created on Fri Jul  3 13:29:21 2015
 """
 
 
-from problems.knapsack import Knapsack, KpBinarySolution
-#from pof.problems import mst
-from spaces.binspace import BinarySpace
+#from problems.knapsack import Knapsack, KpBinarySolution
+from problems.mst  import MST, MSTSolution
+#from spaces.binspace import BinarySpace
 from neighbor.swap import SwapNeighborhood
 from neighbor.addremove import AddOrRemoveNeighborhood
 from methods.hc import hill_climbing
 
 import numpy as np
-import random
+import time
+from testconf import *
 
-random.seed(0)
-np.random.seed(0)
-
-MAXEVALS = 3000
-instance_file = "../src/testset/test.100.1.1"
-
-N = 100
-P  = Knapsack(instance_file, BinarySpace)
-#P  = mst.MST(N)
+#P  = Knapsack(instance_file, BinarySpace)
+P  = MST(N)
 N1 = AddOrRemoveNeighborhood(P.search_space)
 N2 = SwapNeighborhood(P.search_space)
-hcx = KpBinarySolution(P)
-#hcx = mst.MSTSolution(P)
 
-
-nevals = 0
+#hcx = KpBinarySolution(P)
+hcx = MSTSolution(P)
 
 hcExp = np.zeros(MAXEVALS * 2)
 hcExp = np.reshape(hcExp, (MAXEVALS, 2))
 
 state1 = True
+
+start = time.time()
 while nevals < MAXEVALS:
     if nevals % 2 == 0:
         hcx = hill_climbing(N1, hcx)
@@ -46,18 +40,13 @@ while nevals < MAXEVALS:
         nevals += 1    
     # Store current fitness value
     hcExp[nevals-1] = [nevals, hcx.evaluate()]
+print nevals, " evaluations in ", time.time() - start, " seconds."
 
-print nevals 
+
+fx = hcx.evaluate()
 print "UB=", P.ub
 print "f(x)  = ", hcx.evaluate()
 print "f(x*) = ", P.ref
 #print [(i,j) for i,j in x.used]
    
-hcExp = hcExp[range(0,len(hcExp), 30)]
-
-#print "ST from HC"
-#layout = mst.print_spanning_tree(x.data, P.adjmat)
-#plt.draw()   
-
-#print "Optimal spanning tree"
-#mst.print_spanning_tree(P.adjmat)
+hcExp = hcExp[range(0,len(hcExp), POPSIZE)]

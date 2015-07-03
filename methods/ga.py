@@ -35,7 +35,7 @@ def truncation(pop, t):
     return pop[idx]
 
 
-def genetic_algorithm(neighborhood, pop, t=0.15):
+def genetic_algorithm(neighborhood, pop, t):
     pop = truncation(pop, t)
     for j in xrange(1, len(pop)):
         pop[j] = xover(pop[j], random.choice(pop), neighborhood)

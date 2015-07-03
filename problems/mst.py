@@ -7,8 +7,8 @@ Created on Fri Jun 26 11:09:28 2015
 
 import numpy as np
 from pof import Solution
-from scipy.sparse.csgraph import minimum_spanning_tree
-from scipy.sparse.csgraph import connected_components
+from spaces.edgespace import EdgeSpace
+from scipy.sparse.csgraph import minimum_spanning_tree, connected_components
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -30,7 +30,7 @@ class MST(object):
         self.search_space = EdgeSpace(self.N)
         
         self.sol = minimum_spanning_tree(self.distance)
-        self.adjmat = self.st.toarray().astype(int)
+        self.adjmat = self.sol.toarray().astype(int)
         self.ref = np.sum(self.adjmat)
         
 

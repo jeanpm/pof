@@ -75,8 +75,8 @@ class SwapNeighborhood(Neighborhood):
     def randomNeighborTowards(self, x, z):
         # In swap neighborhoods, there is no path between solutions with a 
         # different number of components.
-        if len(x.used) != len(z.used):
-            raise StopIteration()
+        assert len(x.used) == len(z.used)
+            #raise Exception("x and z must have the same number of components")
             
         y = x.clone()
         # Components (used by z and unused by x), (unused by z and used by x).
