@@ -11,7 +11,7 @@
 %\usepackage{bm}
 %\usepackage{bbm}
 
-\author{Jean P. Martins}
+\author{Jean P. Martins\\ \text2}
 \title{A conceptual model for optimization problems}
 
 \begin{document}
