@@ -1,6 +1,6 @@
 # Conceptual model for optimization problems
 
-Challenges:
+## Challenges:
 
 - Clear and total separation between optimization problems (OP) and optimization methods (OM).
 - An optimization problem encompasses:
@@ -20,7 +20,7 @@ Challenges:
   1. From a incumbent solution and neighborhood exploration methods, they must implement which 
 
 
-Implementation: 
+## Implementation: 
 - Se a estrutura de vizinhaça tiver que providenciar mecanismos para aplicar os movimentos, ela também terá que conhecer a estrutura da solução.
 
 - Se, por outro lado, a aplicação de um movimento for responsabilidade da solução, a vizinhança se torna independente da representação da solução.
@@ -28,7 +28,7 @@ Implementation:
 - O espaço S é definido implicitamente como o power set do conjunto de possíveis componentes C. Assim, as solucoes x E S, podem ser incompletas
 
 
-Application:
+### Application:
 - Low-level:
   * Definir o espaço baseado em componentes específicos de um determinado problema.
   * Implementar dentro das soluções os controle dos componentes disponíveis. Cada solução mantém em seu estado os componentes utilizados e os disponíveis.

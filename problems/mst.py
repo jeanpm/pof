@@ -45,8 +45,9 @@ class MSTSolution(Solution):
         self.problem = problem        
         # It is better to be a list since components must be removed, inserted.
         self.unused = list(problem.search_space.components)
-        self.used = []        
+        self.used = []
         self.data = np.zeros([problem.N, problem.N], dtype='int32')
+        self.fx = None
         
         # Shuffle the indices of the components
 #        subset = np.copy(problem.search_space.components)
@@ -61,25 +62,34 @@ class MSTSolution(Solution):
     def __str__(self):
         return np.array_str(self.data) + ":: " + str(self.evaluate())
         
-    def removeTuple(self, lista, c):
+    def __getComponentIndex(self, lista, c):
         for i, val in enumerate(lista):
             if (val[0], val[1]) == (c[0], c[1]):
-                del lista[i]
-                return    
+                return i
+        raise IndexError("Component not in the list")
+        
+    def __updatedata(self, c, value):
+        self.data[c[0],c[1]] = value
+        self.data[c[1],c[0]] = value
+        
         
     def addComponent(self, c):
-        #self.unused.remove(c)
-        self.removeTuple(self.unused, c)
-        self.used.append(tuple(c))
-        self.data[c[0],c[1]] = self.problem.distance[c[0],c[1]]
-        self.data[c[1],c[0]] = self.problem.distance[c[0],c[1]]
+        unusedIndex = self.__getComponentIndex(self.unused, c)
+        self.addComponentByIndex(unusedIndex)
     
     def delComponent(self, c):
-        #self.used.remove(c)
-        self.removeTuple(self.used, c)
-        self.unused.append(tuple(c))
-        self.data[c[0],c[1]] = 0
-        self.data[c[1],c[0]] = 0
+        usedIndex = self.__getComponentIndex(self.used, c)
+        self.delComponentByIndex(usedIndex)  
+    
+    def delComponentByIndex(self, index):
+        c = self.used.pop(index)
+        self.unused.append(c)
+        self.__updatedata(c, 0)
+        
+    def addComponentByIndex(self, index):
+        c = self.unused.pop(index)
+        self.used.append(c)
+        self.__updatedata(c, self.problem.distance[c[0],c[1]])     
         
     def differenceTo(self, y):
         diffUsed = set(y.used) - set(self.used)
@@ -109,10 +119,11 @@ class MSTSolution(Solution):
         return dist
 
     def evaluate(self):
-        self.ncomponents = connected_components(self.data)[0]
-        wsum = sum( [self.problem.distance[c] for c in self.used] )
-        fx = (self.ncomponents-1) * self.problem.ub + wsum
-        return fx
+        if self.fx is None:
+            self.ncomponents = connected_components(self.data)[0]
+            wsum = sum( [self.problem.distance[c] for c in self.used] )
+            self.fx = (self.ncomponents-1) * self.problem.ub + wsum
+        return self.fx
 
 #-----------------------------------------------------------------------------
 # Auxiliar function for drawing a spanning tree

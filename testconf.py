@@ -17,9 +17,13 @@ instance_file = "../src/testset/test.100.1.1"
 
 t = 0.15
 N = 30
+NEXP = 1
 POPSIZE = 50
 nevals = 0
-MAXEVALS = POPSIZE * 300
+MAXEVALS = 10000
+
+#execfile("test_hc.py")
+#execfile("test_ga.py")
 
 
 

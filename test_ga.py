@@ -6,7 +6,6 @@ Created on Fri Jul  3 13:58:05 2015
 """
 
 import numpy as np
-import random
 
 #from problems.knapsack import Knapsack, KpBinarySolution
 from problems.mst  import MST, MSTSolution, print_spanning_tree
@@ -18,10 +17,6 @@ import matplotlib.pyplot as plt
 from testconf import *
 import time
 
-random.seed(0)
-np.random.seed(0)
-
-
 #P  = Knapsack(instance_file, BinarySpace)
 P  = MST(N)
 N1 = AddOrRemoveNeighborhood(P.search_space)
@@ -29,22 +24,29 @@ N1 = AddOrRemoveNeighborhood(P.search_space)
 
 gaExp = np.zeros(MAXEVALS/POPSIZE * 2)
 gaExp = np.reshape(gaExp, (MAXEVALS/POPSIZE, 2))
-gen = 0
-
-#pop = np.array([KpBinarySolution(P) for i in xrange(POPSIZE)])
-pop = np.array([MSTSolution(P) for i in xrange(POPSIZE)])
 
 start = time.time()
-while nevals < MAXEVALS:
-    gaExp[gen, 0] = nevals
-    pop = genetic_algorithm(N1, pop, t)
-    idx =  np.argmin([pop[i].evaluate() for i in xrange(POPSIZE)])
-    gaExp[gen, 1] = pop[idx].evaluate()
-    nevals += POPSIZE
-    gen += 1
+for exp in xrange(NEXP):
+    random.seed(exp)
+    np.random.seed(exp)
+    
+    gen = 0
+    nevals = 0
+    
+    #pop = np.array([KpBinarySolution(P) for i in xrange(POPSIZE)])
+    pop = np.array([MSTSolution(P) for i in xrange(POPSIZE)])
+    
+    while nevals < MAXEVALS:
+        gaExp[gen, 0] = nevals
+        pop = genetic_algorithm(N1, pop, t)
+        idx =  np.argmin([pop[i].evaluate() for i in xrange(POPSIZE)])
+        gaExp[gen, 1] += pop[idx].evaluate()
+        nevals += POPSIZE
+        gen += 1
+    
 print nevals, " evaluations in ", time.time() - start, " seconds."
 
-
+gaExp[:, 1] /= 30.0
 
 fy = pop[0].evaluate() 
 print "f(x)  = ", fy
@@ -64,7 +66,7 @@ plt.title("ST from GA, f(x) = " + str(gax.evaluate()))
 
 plt.show()
 #
-i = 30
+i = 0
 j = len(gaExp[:,0])
 plt.figure()
 plt.axis('on')

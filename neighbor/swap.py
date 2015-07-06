@@ -59,11 +59,12 @@ class SwapNeighborhood(Neighborhood):
         if x.unused and x.used : # if both are not empty
             y = x.clone()        
             # Choses one random component from the used and removes it
-            comp = random.choice(y.used)
-            y.delComponent(comp)    
+            index = random.randrange(len(y.used))
+            y.delComponentByIndex(index)
+                        
             # Chooses one random component from the unused and inserts it
-            comp = random.choice(y.unused)
-            y.addComponent(comp)
+            index = random.randrange(len(y.unused))
+            y.addComponentByIndex(index)            
         # Returns None if not possible
         return y
         

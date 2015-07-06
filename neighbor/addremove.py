@@ -18,9 +18,9 @@ class AddOrRemoveNeighborhood(Neighborhood):
         for index in xrange(self.search_space.dimension):
             y = x.clone()
             if y.isActive(self.index): # If it is active, remove it.
-                y.delComponent(self.index)        
+                y.delComponentByIndex(self.index)        
             else: # If it is not currently active, add it.
-                y.addComponent(self.index)        
+                y.addComponentByIndex(self.index)        
             self.index += 1  # The next component
             # Returns the current neighbor
             yield y
@@ -35,21 +35,21 @@ class AddOrRemoveNeighborhood(Neighborhood):
                 # Add or remove a component with equal probability.
                 if random.choice([True, False]):
                     # Chooses one random component from the unused to be added
-                    comp = random.choice(y.unused) 
-                    y.addComponent(comp)
+                    index = random.randrange(len(y.unused))
+                    y.addComponentByIndex(index)
                 else:
                     # Choses one random component from the used to be removed
-                    comp = random.choice(y.used)
-                    y.delComponent(comp)
+                    index = random.randrange(len(y.used))
+                    y.delComponentByIndex(index)
             else:
                 # If y.used is empty, then:
                 # Choses one random component to be removed
-                comp = random.choice(y.unused) 
-                y.addComponent(comp)
+                index = random.randrange(len(y.unused))
+                y.addComponentByIndex(index)
         else:
             # Choses one random component from the used to be removed
-            comp = random.choice(y.used) 
-            y.delComponent(comp)
+            index = random.randrange(len(y.used))
+            y.delComponentByIndex(index)
             
         # Returns a randomly created bitflip move.
         return y
