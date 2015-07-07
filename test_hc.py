@@ -48,7 +48,7 @@ for exp in xrange(NEXP):
 
 print nevals, " evaluations in ", time.time() - start, " seconds."
 
-hcExp[:, 1] /= 30.0
+hcExp[:, 1] /= NEXP
 
 fx = hcx.evaluate()
 print "UB=", P.ub

@@ -42,12 +42,19 @@ class MSTSolution(Solution):
     '''
     def __init__(self, problem):
         # The number of available components to compose a solution
-        self.problem = problem        
+        self.problem = problem
         # It is better to be a list since components must be removed, inserted.
+        
         self.unused = list(problem.search_space.components)
         self.used = []
         self.data = np.zeros([problem.N, problem.N], dtype='int32')
         self.fx = None
+        
+        self.components = problem.search_space.components
+        self.present = []
+        self.absent  = []
+        # It all starts with undefined components
+        self.unknown = list(problem.search_space.components)
         
         # Shuffle the indices of the components
 #        subset = np.copy(problem.search_space.components)

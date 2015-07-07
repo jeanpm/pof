@@ -46,7 +46,7 @@ for exp in xrange(NEXP):
     
 print nevals, " evaluations in ", time.time() - start, " seconds."
 
-gaExp[:, 1] /= 30.0
+gaExp[:, 1] /= NEXP
 
 fy = pop[0].evaluate() 
 print "f(x)  = ", fy
@@ -66,7 +66,7 @@ plt.title("ST from GA, f(x) = " + str(gax.evaluate()))
 
 plt.show()
 #
-i = 0
+i = 30
 j = len(gaExp[:,0])
 plt.figure()
 plt.axis('on')

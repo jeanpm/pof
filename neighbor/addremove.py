@@ -54,6 +54,19 @@ class AddOrRemoveNeighborhood(Neighborhood):
         # Returns a randomly created bitflip move.
         return y
         
+#    def __nextDiffComponent(self, x, y):
+#        xused = set(x.used)
+#        yused = y.used        
+#        xnused = set(x.unused)
+#        ynused = y.unused
+#
+#        for c in yused:
+#            if c not in xused:
+#                yield (True, c)
+#        for c in ynused:
+#            if c not in xnused:
+#                yield (False, c)
+        
     '''
     Returns a random neighbor of x which is one step closer to y.
     '''

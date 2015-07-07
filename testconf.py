@@ -16,11 +16,13 @@ np.random.seed(0)
 instance_file = "../src/testset/test.100.1.1"
 
 t = 0.15
-N = 30
+N = 20
 NEXP = 1
-POPSIZE = 50
+POPSIZE = 30
 nevals = 0
-MAXEVALS = 10000
+MAXEVALS = 9000
+
+assert MAXEVALS % POPSIZE == 0
 
 #execfile("test_hc.py")
 #execfile("test_ga.py")
