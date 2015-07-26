@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper,onecolumn]{amsart}
+\documentclass[12pt]{llncs}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{amsmath}
@@ -7,34 +7,167 @@
 \usepackage{fullpage}
 \usepackage{tcolorbox}
 \usepackage{microtype}
-%\usepackage{helvet}
-%\usepackage{bm}
-%\usepackage{bbm}
+\usepackage{glossaries}
+\usepackage[round]{natbib}
+\usepackage{hyperref}
+\usepackage{mathpazo}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,%
+                petri,%
+                topaths}%
+\usepackage{tkz-berge}
+\usepackage[position=top]{subfig}
+
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\hypersetup{colorlinks, citecolor=blue, filecolor=black, 
+linkcolor=black, urlcolor=red}
 
 \author{Jean P. Martins\\ \texttt{\lowercase{jeanp@dei.uc.pt}}}
-\title{A conceptual model for optimization problems}
+\institute{University of Coimbra, Portugal}
+\title{An unified model for optimization problems}
 \date{\today}
+
+\newacronym{cop}{COP}{combinatorial optimization problem}
 
 \begin{document}
 
-\begin{abstract}
-Defines general concepts related to combinatorial optimization problems and illustrates how they can be used to implement metaheuristics in terms of elementar neighborhood-based operations.
-\end{abstract}
-
 \maketitle
+%\begin{abstract}
+%Defines general concepts related to combinatorial optimization problems and illustrates how they can be used to implement metaheuristics in terms of elementar neighborhood-based operations.
+%\end{abstract}
 
-\newtheorem{definition}{Definition}[section]
-\newtheorem{example}{Example}[section]
 
-\section{Definitions}
+%\section{Background~\small\citep{johnson1988}}
+%\begin{description}
+%\item[Optimization problem:] ``In a typical combinatorial optimization problem, each instance is associated with a finite set of feasible solutions, each feasible solution has a cost, and the goal is to find a solution of minimum (or maximum) cost.''
+%
+%\item[Local search problem:] ``In order to derive a local search algorithm for such a problem, one superimposes on it [on the problem] a \textit{neighborhood structure} that specifies a \textit{neighborhood} for each solution, that is, a set of solutions that are, in some sense \textit{close} to that solution.''
+%\end{description}
+%From \url{http://www.springer.com/gp/book/9783540358534}:\\
+%
+%``For many combinatorial optimization problems it holds that a solution can be viewed as a subset of a ground set $C$ and that the cost of a solution $x\subseteq S$ can be written as $\sum_{c\in x} w(c)$, where $w(e)$ is the cost of element $c\in C$.''
 
-\begin{definition}[Component]
-In a combinatorial optimization problem, a component $c\in C$ is the elementary unity of a solution. 
+\section{Global Optimization}
+Global optimization concerns finding the best possible solution for \textit{optimization problems}. 
+
+\subsection{Optimization Problems}
+
+\begin{definition}[Optimization problem] An optimization problem is a tuple $(U, P, f, \mathcal{I})$, where $U$ is a solution space, $P: U \mapsto \{\mbox{true}, \mbox{false}\}$ is a feasibility predicate, $f: U \mapsto \mathbb{R}$ is a cost function and $\mathcal{I}$ is a set of instances. 
 \end{definition}
 
-\begin{definition}[Search space]
-The search space $S$ of a combinatorial optimization problem is a subset of the power set of components $S_{\leq n}(2^C)$ (only $S$ from now on), in which elements $x\in S$ can be composed of a maximum of $n$ components. In practical terms, $S$ is implicitly defined by $C$ and $n$.
+\begin{definition}[Feasible solution]
+Given an instance $I\in\mathcal{I}$, a solution $u\in U$ is said feasible if it satisfies $P_I(u)$.
 \end{definition}
+
+\begin{definition}[Feasible set]
+Given an instance $I\in\mathcal{I}$, the set $S_I = \{s\in U : P_I(s)\}$ is called the feasible set of $I$.
+\end{definition}
+
+An \textit{optimization problem} is a abstract concept, in the sense that many parameters needed to define it are absent.  \textit{Instances} make an optimization problem concrete by providing values for such parameters~\citep{stutzle1999local}. 
+
+All the instances $I\in\mathcal{I}$ from a optimization problem share the same solution space $U$. However, the feasibility predicate $P_I$ and the cost function $f_I$ are instance-dependent and may induce different \textit{feasible sets}. A solution for an instance of an optimization problem is:
+\begin{align}
+s^\star := \argmin_{s\in S_I} {f_I(s)},
+\end{align}
+and $s^\star$ is called a global optimum solution.
+
+%Maximization problem by considering $f'(s) = -f(s)$.
+
+\subsection{Combinatorial Optimization Problems~\small\citep{michiels2010}}
+A \gls{cop} is an optimization problem in which the solution space $U= 2^C$ is the power set of a finite number of components $C$. Each solution $u\in U$ is a subset $u\subseteq C$, and $C$ is called the ground set of $U$ (or \textit{component set}). 
+
+The cost of a feasible solution $s\in S_I$ it is a function of the cost of its components $w_I(c)> 0,~\forall c\in s$. In the case of linear \glspl{cop}, an optimal solution for an instance $I\in\mathcal{I}$ is:
+\begin{align}
+s^\star := \argmin_{s\in S_I} {\sum_{c\in s} w_I(c)}.
+\end{align}
+The combinatorial nature of a \gls{cop} is captured by the feasibility predicate $P_I$, which limits the components that can co-occur in feasible solutions.
+
+\section{Local Optimization}
+%\subsection{Optimization Problems}
+Local optimization is a more restricted way to describe optimization problems, in which the feasible solution set $S$ supports a distance metric $d : U\times U \mapsto \mathbb{R}$. In such circumstances a notion of neighboring solutions becomes available.
+
+\begin{definition}[$k$-neighborhood]
+Given a solution space $U$, a distance metric $d : U\times U \mapsto \mathbb{R}$ and a radius $k>0$, a solution $s\in S$ has neighborhood $\mathcal{N}_k(s) :=\{v\in S : d(s,v) \leq k\}$.
+\end{definition}
+
+Observe that the neighboring solutions depend on $d$, therefore, different distance metrics induce different neighborhoods.
+
+\begin{definition}[Local optimization problem] A local optimization problem is an optimization problem in which the feasible set is embedded with a neighborhood structure $\mathcal{N}_k: S \mapsto 2^S$.
+\end{definition}
+
+
+Since $d$ is defined over the whole solution space $U$,  neighborhoods are problem-dependent, but instance-independent. In this context, a solution for an instance of a local optimization problem is:
+\begin{align}
+\hat{s} := \argmin_{s\in \mathcal{N}_k(\hat{s})} {f_I(s)},
+\end{align}
+and $\hat{s}$ is called a local optimum solution according to $\mathcal{N}_k(\hat{s})$. If $\hat{s}$ it always guaranteed to be also a global optimum, $\mathcal{N}_k$ is called an \textit{exact neighborhood}.
+
+The search for a local optimum solution can be seen as walk on the \textit{neighborhood graph}, which stops when no improving solutions can be found~\citep{stutzle1999local}.
+\begin{definition}[Neighborhood graph]
+Given a symmetric neighborhood structure $\mathcal{N}$, in which $s\in \mathcal{N}(v) \iff v\in \mathcal{N}(s)$, the neighborhood graph $G=(S,E)$ is composed of vertices $s\in S$ and edges $(s,v)~\forall v\in \mathcal{N}(s)$.
+\end{definition}
+
+\section{Constructive Heuristics}
+
+\section{Combinatorial Optimization Problems}
+In combinatorial optimization the extra information about the \textit{component set} can be used to define an elementary distance metric over the solution space $U$.
+\begin{definition}[Elementary distance]
+An elementary distance metric $d_e : U\times U: \mapsto \mathbb{R}$ is defined in terms of the components shared, or not, by both solutions. 
+\begin{align}
+d_e(u,v) :=  |u - v| + |v - u|,~\forall u,v\in U
+\end{align}
+\end{definition}
+
+The elementary distance metric $d_e$ might be used to induce two non-symmetrical elementary neighborhoods in $U$. 
+
+\begin{definition}[\textsc{add}-neighborhood]
+Given a solution space $U$ and a distance metric $d_e$, a solution $u\in U$ has neighborhood $\mathcal{N}_\text{\sc{add}}(u) :=\{v\in U : d_e(u,v) = 1 \land u\subset v\}$.
+\end{definition}
+
+\begin{definition}[\textsc{sub}-neighborhood]
+Given a solution space $U$ and a distance metric $d_e$, a solution $u\in U$ has neighborhood $\mathcal{N}_\text{\sc{sub}}(u) :=\{v\in U : d_e(u,v) = 1 \land v\subset u\}$.
+\end{definition}
+
+The composition of \textsc{add} and \textsc{sub}-neighborhoods produces an elementary neighborhood structure over $U$ which is symmetrical.
+\begin{definition}[Elementary neighborhood]
+Given a solution space $U$ and a distance metric $d_e$, a solution $u\in U$ has elementary neighborhood $\mathcal{N}_e(u) :=\{v\in U : v\in \mathcal{N}_\text{\sc{add}}(u) \bigcup \mathcal{N}_\text{\sc{sub}}(u) \}$.
+\end{definition}
+
+Elementary neighborhoods are problem-independent and are called elementary because more complex and problem-specific neighborhoods can be defined from them. 
+
+\section{Augmented Solution Spaces}
+
+%\begin{definition}[Incidence vector]
+%Every solution $s\in S$ is associated with one incidence vector. Consider the index set $\mathcal{I} = \{1,\dots,|C|\}$, for $\forall i\in \mathcal{I}$:
+%$$
+%\begin{cases}
+%x^{s}_i = 0, & \text{if $c_i$ cannot compose $s$}\\
+%x^{s}_i = 1, & \text{if } c_i\in s\\
+%x^{s}_i = \star, & \text{if } c_i\notin s \text{ but can compose } s
+%\end{cases}
+%$$
+%\end{definition}
+
+\begin{definition}[Partial solution]
+A solution $s\in S$ is said partial if $\exists i\in \mathcal{I} : x^{s}_i = \star$, and we say $c_i$ is in an {undefined state}. 
+\end{definition}
+
+\begin{definition}[Complete solution]
+A solution $s\in S$ is said complete if $\nexists i\in \mathcal{I} : x^{s}_i = \star$. Every component $i\in \mathcal{I}$ is {present} ($x_i=1$) or {absent} ($x_i=0$) states. 
+\end{definition}
+
+
+
+\begin{definition}
+A linear combinatorial optimization problem $(S,w)$, consists in finding an $s\in S$ with minimal (maximal) objective value $f(I(x))$. 
+\end{definition}
+
+
+
 
 \begin{tcolorbox}
 	\begin{example}[Knapsack problem component]
@@ -66,20 +199,41 @@ A neighborhood function $N_{k}(x) = \{y\in S : d(x,y) = \delta(k)\}$ defines the
 
 Observe that the neighborhoods add/remove and swap are independent of the component structure, whereas 2-opt assume the components are edges in a graph.
 
-\section{Implementation details}
+\section*{TODO}
+``Construtive algorithms generate solutions from scratch by adding components to an initially empty solution until completion. They are typically the fastest approximate methods, yet they often return solutions of inferior quality when compared to local search algorithms''~\citep{stutzle1999local}.
+\begin{itemize}
+\item Define the current modeling 
+\item Justify the need for the unified model
+\item Define the extensions
+\item Model well-known methods and neighborhoods using the extensions
+\end{itemize}
 
-\begin{definition}[Search space]
-The search space structure $S$ defines the list of components $C$ it supports.
-\end{definition}
+%\begin{figure}
+%\centering
+%\begin{tikzpicture}[scale=1,transform shape]
+%  \Vertex[x=0,y=0]{K}
+%  \Vertex[x=-4,y=0]{F}
+%  \Vertex[x=4,y=0]{D}
+%  \Vertex[x=3,y=1]{H}
+%  \Vertex[x=-3,y=1]{N}
+%  \Vertex[x=-2,y=2]{M}
+%  \Vertex[x=0,y=2]{P}
+%  \Vertex[x=2,y=2]{Q}
+%  \tikzstyle{LabelStyle}=[fill=white,sloped]
+%  \tikzstyle{EdgeStyle}=[post]%bend left]
+%  \Edge[label=\textsc{add}](K)(F)
+%  \Edge[label=\textsc{add}](K)(N)
+%  \Edge[label=\textsc{add}](K)(M)
+%  \Edge[label=\textsc{add}](K)(P)
+%  \Edge[label=\textsc{add}](K)(Q)
+%  \Edge[label=\textsc{add}](K)(H)
+%  \Edge[label=\textsc{add}](K)(D)
+%
+%\end{tikzpicture}
+%\end{figure}
 
 
-\begin{definition}[Solution]
-Solutions $x$, as elements of the search space $S$, have a copy of the component list. The components composing $x$ are stored in $C_u = \{c\in C : c\in x\}$, the remaining (available) are stored in $C_a =\{ c\in C: c\notin x\}$. In summary, $C_u \cup C_a = C$.
-\end{definition}
-
-\begin{definition}[Neighborhood]
-Neighboring solutions are generated by the function $N$, which has access to solutions $x$ and their component lists.
-\end{definition}
-
+\bibliographystyle{abbrvnat}
+\bibliography{report}
 
 \end{document}

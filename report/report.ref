@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library>
+	<manage_target braces="false" utf8="false">report.bib</manage_target>
+	<library_folder monitor="false"></library_folder>
+	<taglist/>
+	<doclist>
+		<doc>
+			<filename></filename>
+			<key>michiels2010</key>
+			<notes></notes>
+			<bib_type>book</bib_type>
+			<bib_doi></bib_doi>
+			<bib_title>Theoretical Aspects of Local Search</bib_title>
+			<bib_authors>Michiels, Wil and Aarts, Emile and Korst, Jan</bib_authors>
+			<bib_journal></bib_journal>
+			<bib_volume></bib_volume>
+			<bib_number></bib_number>
+			<bib_pages></bib_pages>
+			<bib_year>2010</bib_year>
+			<bib_extra key="edition">1st</bib_extra>
+			<bib_extra key="Isbn">3642071481, 9783642071485</bib_extra>
+			<bib_extra key="publisher">Springer Publishing Company, Incorporated</bib_extra>
+		</doc>
+		<doc>
+			<filename></filename>
+			<key>johnson1988</key>
+			<notes></notes>
+			<bib_type>Article</bib_type>
+			<bib_doi></bib_doi>
+			<bib_title>How easy is local search?</bib_title>
+			<bib_authors>Johnson, David S. and Papadimitriou, Christos H. and Yannakakis, Mihalis</bib_authors>
+			<bib_journal>Journal of Computer and System Sciences </bib_journal>
+			<bib_volume>37</bib_volume>
+			<bib_number>1</bib_number>
+			<bib_pages>79-100</bib_pages>
+			<bib_year>1988</bib_year>
+			<bib_extra key="Doi">http://dx.doi.org/10.1016/0022-0000(88)90046-3</bib_extra>
+			<bib_extra key="Issn">0022-0000</bib_extra>
+			<bib_extra key="Url">http://www.sciencedirect.com/science/article/pii/0022000088900463</bib_extra>
+		</doc>
+	</doclist>
+</library>
